@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>This is a webpage</title>
+</head>
+
+<body>
+  <h1>This is front end</h1>
+
+  <button id="btn">Click to load data</button>
+
+  <script>
+    const btn = document.getElementById("btn")
+    btn.onclick = () => {
+      const xhr = new XMLHttpRequest()
+
+      xh.open("GET", "http://localhost:3000/students")
+
+      xhr.send()
+    }
+  </script>
+
+</body>
+
+</html>
