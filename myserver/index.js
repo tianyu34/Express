@@ -11,7 +11,7 @@ const STU_ARR = [
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.use((req, res) => {
+app.use((req, res, next) => {
   //Set respons ahead
   res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
   res.setHeader("Access-Control-Allow-Methods", "GET, POST")
@@ -24,7 +24,6 @@ app.use((req, res) => {
 
 //Set information router
 app.get("/students", (req, res, next) => {
-
 
   console.log("Students 'Get'")
   //return the infor
