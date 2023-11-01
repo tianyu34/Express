@@ -14,13 +14,32 @@ app.use(express.json())
 app.use((req, res, next) => {
   //Set respons ahead
   res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST")
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH")
   res.setHeader("Access-Control-Allow-Headers", "Content-type")
   // res.setHeader("Access-Control-Allow-Origin", "*")
   //Access-Control-Allow-Methods allows request Method
   //Access-Control-Allow-Headers allows request Header
   next()
 })
+
+//log in function routrt
+app.use("/login", (req, res) => {
+  const { username, password } = req.body
+  if (username === 'admin' && password === '12345') {
+    //successful log in
+    res.send({
+      status: "ok",
+      data: { id: "12345", username: "admin", nickname: "supermanager" }
+    })
+  } else {
+    res.status(403).send({
+      status: "error",
+      data: "username or password wrong"
+    })
+  }
+})
+
+
 
 //Set information router
 app.get("/students", (req, res, next) => {
@@ -58,7 +77,7 @@ app.post("/students", (req, res) => {
     address
   }
   //add student infor to array
-  STU_ARR.push()
+  STU_ARR.push(stu)
   //add succeed
   res.send({
     status: "ok",
