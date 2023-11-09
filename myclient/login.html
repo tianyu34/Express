@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 50%;
+    }
+
+    td,
+    th {
+      font-size: 20px;
+      text-align: center;
+      border: 1px solid #000;
+    }
+
+    caption {
+      font-size: 30px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <h1>Log In</h1>
+    <h2 id="infor"></h2>
+    <form>
+      <div>
+        <input id="username" type="text">
+      </div>
+      <div>
+        <input id="password" type="password">
+      </div>
+      <div>
+        <button id="login-btn" type="button">Login</button>
+      </div>
+    </form>
+  </div>
+
+
+
+  <script>
+    const loginBtn = document.getElementById("login-btn");
+    const root = document.getElementById("root");
+
+    // Check if the user has logged in
+    if (localStorage.getItem("nickname")) {
+      // Update the content for logged-in users
+      root.innerHTML = `
+        <h1> Welcome ${localStorage.getItem("nickname")}</h1>
+        <hr>
+        <button id='load-btn' onclick="loadData()"> Load Data </button>
+        <hr>
+        <div id="data"></div>
+    `;
+    } else {
+      loginBtn.onclick = () => {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        // Using fetch to connect to the server
+        fetch("http://localhost:3000/login", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify({ username, password })
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.status !== "ok") {
+              throw new Error("Username or Password Incorrect!");
+            }
+
+            // Store user information
+            localStorage.setItem("username", res.data.username);
+            localStorage.setItem("userId", res.data.id);
+            localStorage.setItem("nickname", res.data.nickname);
+
+            // Successful login
+            root.innerHTML = `
+            <h1> Welcome ${res.data.nickname}</h1>
+            <hr>
+            <button id='load-btn' onclick="loadData()"> Load Data </button>
+            <hr>
+            <div id="data"></div>
+          `;
+          })
+          .catch((err) => {
+            document.getElementById("infor").innerHTML = "Username or Password Incorrect!";
+          });
+      };
+
+      function loadData() {
+        // Fetch student data
+        fetch("http://localhost:3000/students")
+          .then((res) => {
+            if (res.status === 200) {
+              return res.json();
+            } else {
+              throw new Error('Load Error');
+            }
+          })
+          .then((res) => {
+            if (res.status === "ok") {
+              // Render data
+              const dataDiv = document.getElementById("data");
+              // Create a table
+              const table = document.createElement("table");
+              dataDiv.appendChild(table);
+              table.insertAdjacentHTML("beforeend", "<Caption>Student List</Caption>");
+              table.insertAdjacentHTML("beforeend", `
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Age</th>
+                  <th>Gender</th>
+                  <th>Address</th>
+                </tr>
+              </thead>
+            `);
+
+              const tbody = document.createElement('tbody');
+              table.appendChild(tbody);
+
+              // Traverse Data
+              for (let stu of res.data) {
+                tbody.insertAdjacentHTML("beforeend", `
+                <tr>
+                  <td>${stu.id}</td>
+                  <td>${stu.name}</td>
+                  <td>${stu.age}</td>
+                  <td>${stu.gender}</td>
+                  <td>${stu.address}</td>
+                </tr>
+              `);
+              }
+            }
+          })
+          .catch((err) => {
+            console.log('Error!!!', err);
+          });
+      }
+    }
+  </script>
+
+
+</body>
+
+</html>

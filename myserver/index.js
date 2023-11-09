@@ -22,8 +22,8 @@ app.use((req, res, next) => {
   next()
 })
 
-//log in function routrt
-app.use("/login", (req, res) => {
+//log in function router
+app.post("/login", (req, res) => {
   const { username, password } = req.body
   if (username === 'admin' && password === '12345') {
     //successful log in
